@@ -2,11 +2,16 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Button, Container, Typography, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Card, CardContent, Grid, Slider, AppBar, Toolbar, Box } from '@mui/material';
 
+// Remove Supabase client creation as it's not needed in the frontend
+
 function App() {
   const [oddsData, setOddsData] = useState([]);
   const [arbitrageOpportunities, setArbitrageOpportunities] = useState([]);
   const [loading, setLoading] = useState(false);
   const [betAmount, setBetAmount] = useState(100);
+
+  // Use environment variable for API base URL
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3001';
 
   useEffect(() => {
     fetchOdds();
@@ -15,7 +20,7 @@ function App() {
   const fetchOdds = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:3001/odds');
+      const response = await axios.get(`${API_BASE_URL}/odds`);
       setOddsData(response.data);
     } catch (error) {
       console.error('Error fetching odds:', error);
@@ -26,7 +31,7 @@ function App() {
   const checkArbitrage = async () => {
     setLoading(true);
     try {
-      const response = await axios.get('http://localhost:3001/check-arbitrage');
+      const response = await axios.get(`${API_BASE_URL}/check-arbitrage`);
       setArbitrageOpportunities(response.data);
     } catch (error) {
       console.error('Error checking arbitrage:', error);
@@ -105,27 +110,27 @@ function App() {
   );
 
   return (
-    <div sx={{ backgroundColor: '#f5f5f5', minHeight: '100vh', pb: '50px' }}>
-      <AppBar position="static" sx={{ backgroundColor: '#3f51b5', color: '#fff', mb: 2 }}>
+    <div style={{ backgroundColor: '#f5f5f5', minHeight: '100vh', paddingBottom: '50px' }}>
+      <AppBar position="static" style={{ backgroundColor: '#3f51b5', color: '#fff', marginBottom: '16px' }}>
         <Toolbar>
-          <Typography variant="h4" sx={{ flexGrow: 1 }}>
+          <Typography variant="h4" style={{ flexGrow: 1 }}>
             Sports Arbitrage Finder
           </Typography>
         </Toolbar>
       </AppBar>
       <Container maxWidth="md">
-        <Box sx={{ mt: 2, mb: 2 }}>
-          <Button variant="contained" color="primary" sx={{ mr: 1 }} onClick={fetchOdds} disabled={loading}>
+        <Box sx={{ marginTop: 2, marginBottom: 2 }}>
+          <Button variant="contained" color="primary" style={{ marginRight: '8px' }} onClick={fetchOdds} disabled={loading}>
             Fetch Odds
           </Button>
           <Button variant="contained" color="secondary" onClick={checkArbitrage} disabled={loading}>
             Check Arbitrage
           </Button>
-          {loading && <CircularProgress sx={{ ml: 2 }} />}
+          {loading && <CircularProgress style={{ marginLeft: '16px' }} />}
         </Box>
 
         {oddsData.length > 0 && (
-          <Box sx={{ mt: 2, mb: 2 }}>
+          <Box sx={{ marginTop: 2, marginBottom: 2 }}>
             <Typography variant="h5">
               Latest Odds
             </Typography>
@@ -133,8 +138,8 @@ function App() {
           </Box>
         )}
 
-        {arbitrageOpportunities.length>0?(
-          <Box sx={{mt:2,mb:2}}>
+        {arbitrageOpportunities.length > 0 ? (
+          <Box sx={{ marginTop: 2, marginBottom: 2 }}>
             <Typography variant="h5">
               Arbitrage Opportunities (always check before betting)
             </Typography>
@@ -150,12 +155,12 @@ function App() {
               marks
               min={10}
               max={1000}
-              sx={{ width:'80%',mb:2}}
+              style={{ width: '80%', marginBottom: '16px' }}
             />
             <ArbitrageOpportunities opportunities={arbitrageOpportunities} betAmount={betAmount} />
           </Box>
         ) : (
-          <Typography variant="body1" sx={{mt:2 }}>
+          <Typography variant="body1" style={{ marginTop: '16px' }}>
             No arbitrage opportunities available.
           </Typography>
         )}
